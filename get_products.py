@@ -27,11 +27,11 @@ def extract_product_info(html):
 
     # Find the parent table that contains the product information
     parent_table = soup.find('table', align='center', width='710')
-    
+
     if parent_table:
         # Find all the child tables that represent individual products
         product_tables = parent_table.find_all('td', class_='bg_tabla')
-        
+
         # Iterate over each product table and extract the information
         for table in product_tables:
             # Initialize variables for each product
@@ -56,7 +56,6 @@ def extract_product_info(html):
                 characteristic_element = characteristic_element.text.strip()
                 characteristic_element = characteristic_element.replace('\t', '')
                 characteristics.append(characteristic_element)
-                
 
             image_element = table.find('img')
             if image_element:
@@ -86,13 +85,13 @@ def extract_product_info(html):
 website_url = "https://www.altamateriales.com.mx"
 
 # Print the result
-for link in extract_menu_links(website_url):
-    section = link[0]
-    url = link[1]
-
-    response = requests.get(url)
-
-    product_info = extract_product_info(response.content)
-
-    print(f'Products in {product_info}:')
-    break
+#for link in extract_menu_links(website_url):
+#    section = link[0]
+#    url = link[1]
+#
+#    response = requests.get(url)
+#
+#    product_info = extract_product_info(response.content)
+#
+#    print(f'Products in {product_info}:')
+#    break
