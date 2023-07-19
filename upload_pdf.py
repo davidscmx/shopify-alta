@@ -6,7 +6,6 @@ def upload_pdf_to_shopify(pdf_url, pdf_name):
     # Download the PDF from the URL
     response = requests.get(pdf_url)
     pdf_data = response.content
-
     # Encode the PDF using base64
     encoded_pdf = b64encode(pdf_data).decode("utf-8")
 
