@@ -1,25 +1,20 @@
 import requests
 import shopify
+from pathlib import Path
 from pybase64 import b64encode
 
 def upload_pdf_to_shopify(pdf_url, pdf_name):
     # Download the PDF from the URL
     response = requests.get(pdf_url)
     pdf_data = response.content
-
+    pdf_url = Path(pdf_url)
     # Encode the PDF using base64
     encoded_pdf = b64encode(pdf_data).decode("utf-8")
-
-    asset = shopify.Asset({
-      'key': 'assets/document.pdf',
-      'source_key': 'document.pdf',
-      'attachment': None
-})
 
     # Create a new asset object and attach the encoded PDF to it
     asset = shopify.Asset()
     print(pdf_name)
-    asset.key = pdf_name
+    asset.key = 'pdfs/'+pdf_url.name
     asset.attachment = encoded_pdf
     asset.save()
 
