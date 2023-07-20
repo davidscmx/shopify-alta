@@ -1,17 +1,44 @@
 
 import shopify
 import requests
+import base64
+from pathlib import Path
 from get_products import extract_product_info, extract_menu_links
 from upload_pdf import upload_pdf_to_shopify
 from bing_image_downloader import downloader
 import os
 
+def remove_non_ascii(string):
+    """
+    Remove non-ASCII characters from a string.
+    
+    Parameters:
+        string (str): The input string.
+        
+    Returns:
+        str: The string with non-ASCII characters removed.
+    """
+    return ''.join(char for char in string if ord(char) < 128)
 
-def download_images(query):
-    downloader.download(query, limit=5, output_dir='images', adult_filter_off=True, force_replace=False, timeout=60)
 
+def download_images(query, limit=10):
+    downloader.download(query, limit=limit, output_dir="images", adult_filter_off=True, force_replace=False, timeout=60)
 
-download_images("cute kittens")
+def save_image_to_shopify(image_path, product_id, position=1):
+    # Open the image file from your local directory and read its binary data
+    with open(image_path, 'rb') as f:
+        image_data = f.read()
+
+    # Create a new product image using the image data
+    new_image = shopify.Image.create({
+        'product_id': product_id,
+        'position': position,
+        'attachment': base64.b64encode(image_data).decode('utf-8')
+    })
+
+    # Save the new image to the product
+    new_image.save()
+
 
 website_url = "enlineamateriales.myshopify.com"
 token = os.environ.get('SHOPIFY_TOKEN')
@@ -30,36 +57,25 @@ for link in extract_menu_links(old_website_url):
     products = extract_product_info(response.content)
 
     for product in products:
+        product_title = product['product_name']
+        # Create a new product
+        new_product = shopify.Product()
+        new_product.title = product_title
+        new_product.product_type = section
 
-        pdf_urls = []
-        for i, pdf_url in enumerate(product['file_paths']):
-            pdf_url = old_website_url+"/"+pdf_url
-            upload_pdf_to_shopify(pdf_url, f"{product['product_name']}_{i}")
-            #pdf_urls.append(pdf_url)
+        if len(product['file_paths']) > 0:
+            pdf_url = old_website_url+"/"+product['file_paths'][0]
+            new_product.body_html = f'<p>{product["product_description"]}</p>\n\n<p><a href={pdf_url} style="font-size: 1.875rem;" target="_blank" rel="noopener noreferrer"> Descargar Ficha Técnica</a></p>'
+        else:
+            new_product.body_html = f'<p>{product["product_description"]}</p>'
+        
+        print("Saving product")
+        new_product.save()
 
-#        # Create a new product
-#        #new_product = shopify.Product()
-#        #new_product.title = product_info['product_name']
-#        #new_product.product_type = section
-#        #new_product.body_html = f'<p>{product_info["product_description"]}</p>\nM<p>a href={pdf_url} style="font-size: 1.875rem;" target="_blank" rel="noopener noreferrer"> Descargar Ficha Técnica</a></p>'
-#
-#
-#        #with open(path, "rb") as f:
-#        #    filename = path.split("/")[-1:][0]
-#        #    encoded = f.read()
-#        #    image.attach_image(encoded, filename=filename)
-#
-#        #success = new_product.save() #returns false if the record is invalid
-#        ## or
-#        #if new_product.errors:
-#        #    pass
-#        ##something went wrong, see new_product.errors.full_messages() for example
-##
-#        # Update a product
-#        #new_product.handle = "burton-snowboard"
-#        #new_product.save()
-#
-#        break
-#    break
-#
-#
+        query = product_title +" "+"USG"
+        download_images(query, limit=10)
+        for i, image in enumerate(Path(f"./images/{query}/").iterdir()):
+            save_image_to_shopify(f'{image}', new_product.id, position=i)
+            
+
+
