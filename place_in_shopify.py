@@ -78,6 +78,7 @@ for link in extract_menu_links(old_website_url):
 
     collection = shopify.SmartCollection()
     collection.title = section
+    collection.template_suffix = "sin-precio-ni-agotado"
 
     existing_collection = shopify.SmartCollection.find_first(title=collection.title)
     if existing_collection:
@@ -99,6 +100,17 @@ for link in extract_menu_links(old_website_url):
         if not product_title:
             continue
         product_title_cleaned = clean_string(product_title)
+
+        # Plafon
+        if product_title_cleaned == "plafon":
+            product_title = "Plafón "+product_title
+
+        if product_title_cleaned == "aislantes":
+            product_title = "Aislante "+product_title
+
+        if product_title_cleaned == "conectores_para_madera":
+            product_title = "USP  "+product_title
+
 
         # Create a new product
         new_product = shopify.Product()
