@@ -4,15 +4,18 @@ import requests
 import base64
 import re
 from pathlib import Path
-from get_products import extract_product_info, extract_menu_links
+
 from bing_image_downloader import downloader
 from unidecode import unidecode
 import os
 
 
+from get_products import extract_product_info, extract_menu_links
+from get_vendor import get_product_vendor
+
+
 def replace_spaces_with_underscore(string):
     return re.sub('\s+', '_', string)
-
 
 def clean_string(string):
     print(repr(string))
@@ -51,6 +54,12 @@ def save_image_to_shopify(image_path, product_id, position=1):
     new_image.save()
 
 
+def collection_exists(collection_title):
+    # Use find() with the title query parameter to search for the collection directly
+    existing_collections = shopify.CustomCollection.find(title=collection_title)
+    return len(existing_collections) > 0
+
+
 website_url = "enlineamateriales.myshopify.com"
 token = os.environ.get('SHOPIFY_TOKEN')
 
@@ -70,6 +79,13 @@ for link in extract_menu_links(old_website_url):
     collection = shopify.SmartCollection()
     collection.title = section
 
+    existing_collection = shopify.SmartCollection.find_first(title=collection.title)
+    if existing_collection:
+        print("Collection already exists, will not add it again")
+        continue
+
+    collection.published_scope = "global"
+
     collection.rules = {
         'column': 'type',
         'relation': 'equals',
@@ -87,13 +103,22 @@ for link in extract_menu_links(old_website_url):
         # Create a new product
         new_product = shopify.Product()
         new_product.title = product_title
+
+        # check if product exists
+        existing_product = shopify.Product.find_first(title=new_product.title)
+        if existing_product:
+            print("Product already exists, will not add it again")
+            continue
+
+        new_product.vendor = get_product_vendor(section, product_title)
         new_product.product_type = section
-        new_product.template_suffix = "sin-precio-ficha-tecnica"
+        new_product.template_suffix = "sin-precio-ficha-tec"
 
         if len(product['file_paths']) > 0:
             pdf_url = old_website_url+"/"+product['file_paths'][0]
+            product_description = product["product_description"].strip("DESCARGAR FICHA TÉCNICA")
             new_product.body_html = new_product.body_html = (
-                                    f'<p>{product["product_description"]}</p>\n\n'
+                                    f'<p>{product_description}</p>\n\n'
                                     f'<p><a href={pdf_url} style="font-size: 1.875rem;" '
                                     f'target="_blank" rel="noopener noreferrer">'
                                     f'Descargar Ficha Técnica</a></p>')
@@ -102,13 +127,7 @@ for link in extract_menu_links(old_website_url):
 
         print("Saving product")
         new_product.save()
-        if "tabla" in product_title_cleaned:
-            additional_search = "USG"
-        else:
-            additional_search = None
 
-        download_images(product_title, product_title_cleaned, additional_search, limit=10)
+        download_images(product_title, product_title_cleaned, new_product.vendor, limit=10)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
             save_image_to_shopify(f'{image}', new_product.id, position=i)
-
-    break
