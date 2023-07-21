@@ -81,20 +81,20 @@ for link in extract_menu_links(old_website_url):
     collection.template_suffix = "sin-precio-ni-agotado"
 
     existing_collection = shopify.SmartCollection.find_first(title=collection.title)
-    if existing_collection:
-        print("Collection already exists, will not add it again")
+    if not existing_collection:
+        print("Collection does not exist, will create new")
         continue
 
-    collection.published_scope = "global"
+        collection.published_scope = "global"
 
-    collection.rules = {
-        'column': 'type',
-        'relation': 'equals',
-        'condition': section
-    },
+        collection.rules = {
+            'column': 'type',
+            'relation': 'equals',
+            'condition': section
+        },
 
-    collection.save()
-    # https://www.mitek-us.com/
+        collection.save()
+
     for product in products:
         product_title = product['product_name']
         if not product_title:
@@ -102,7 +102,7 @@ for link in extract_menu_links(old_website_url):
         product_title_cleaned = clean_string(product_title)
 
         # Plafon
-        if product_title_cleaned == "plafon":
+        if section == "plafones_usg":
             product_title = "Plafón "+product_title
 
         if product_title_cleaned == "aislantes":
@@ -110,7 +110,6 @@ for link in extract_menu_links(old_website_url):
 
         if product_title_cleaned == "conectores_para_madera":
             product_title = "USP  "+product_title
-
 
         # Create a new product
         new_product = shopify.Product()
@@ -128,7 +127,9 @@ for link in extract_menu_links(old_website_url):
 
         if len(product['file_paths']) > 0:
             pdf_url = old_website_url+"/"+product['file_paths'][0]
-            product_description = product["product_description"].strip("DESCARGAR FICHA TÉCNICA")
+            print("before striping ", product["product_description"])
+            product_description = product["product_description"].replace("DESCARGAR FICHA TÉCNICA","")
+            print("before striping ", product_description)
             new_product.body_html = new_product.body_html = (
                                     f'<p>{product_description}</p>\n\n'
                                     f'<p><a href={pdf_url} style="font-size: 1.875rem;" '
