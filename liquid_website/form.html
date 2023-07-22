@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Plafon Presupuesto</title>
+    <link rel="stylesheet" href="form_style.css">
+    <script src="adding_rows.js"></script>
+    <script src="update_values.js"></script>
+  </head>
+  <body>
+    <form id="plafon" method="post" name="plafon">
+      <table
+        id="articulosTable"
+        bordercolor="#000000"
+        cellpadding="2"
+        cellspacing="0"
+        width="570"
+      >
+        <tbody>
+          <tr>
+            <th align="left" class="txt_liga_presupuestos" width="240">
+              LARGO:
+            </th>
+            <td width="90">
+              <input
+                name="txtLargo"
+                onblur="if(this.value == '') {this.value = '0'}"
+                onfocus="if(this.value == '0') {this.value = ''}"
+                onkeyup="updateValues()"
+                size="5"
+                tabindex="1"
+                type="text"
+                value="0"
+              />
+              <span class="listadodelinks">m</span>
+            </td>
+            <td
+              align="left"
+              class="listadodelinks"
+              rowspan="2"
+              valign="top"
+              width="130"
+            >
+              <strong>&Aacute;REA:</strong>
+              <input
+                class="txtLabel"
+                name="txtArea"
+                readonly="readonly"
+                size="5"
+                type="text"
+                value="0"
+              />
+              m<sup>2</sup>
+            </td>
+            <td class="listadodelinks" rowspan="2"></td>
+          </tr>
+          <tr>
+            <th align="left" class="txt_liga_presupuestos">ANCHO:</th>
+            <td>
+              <input
+                name="txtAncho"
+                onblur="if(this.value == '') {this.value = '0'}"
+                onfocus="if(this.value == '0') {this.value = ''}"
+                onkeyup="updateValues()"
+                size="5"
+                tabindex="2"
+                type="text"
+                value="0"
+              />
+              <span class="listadodelinks"> m</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="txt_caracteristicas">ART&Iacute;CULO</td>
+            <th class="txt_caracteristicas" width="66">CANTIDAD</th>
+            <th class="txt_caracteristicas" width="46">UNIDAD</th>
+            <th class="txt_caracteristicas" width="80">
+              PRECIO<br />
+              UNITARIO
+            </th>
+            <th class="txt_caracteristicas" width="80">
+              PRECIO<br />
+              TOTAL
+            </th>
+          </tr>
+        </tbody>
+      </table>
+      <table bordercolor="#000000" cellpadding="2" cellspacing="0" width="570">
+        <tbody>
+          <script>
+            addRow("&Aacute;NGULO DE AMARRE 3mts CAL.26", "PZA.", 34.0);
+            addRow("CANALETA DE CARGA 1 1/2&quot; x 3mts CAL.22", "PZA.", 79.0);
+            addRow("REDIMIX PASTA TABLAROCA 21.8 kg", "CAJA.", 299.0);
+            addRow("PERFACINTA (USA) 75mts", "ROLLO.", 78.0);
+            addRow("CANAL LISTON 7/8&quot; x 3mts CAL.26", "PZA.", 45.0);
+            addRow("TABLAROCA ULTRALIGHT 1/2&quot;", "PZA.", 172.0);
+            addRow("TORNILLO 1&quot; FINA", "PZA.", 0.2);
+            addRow("TORNILLO MINI 1/2&quot; PN", "PZA.", 0.2);
+            addRow("ALAMBRE CAL.18", "KG.", 58.0);
+            addRow("ALAMBRE CAL. 14", "KG.", 58.0);
+            addRow("CLAVO PARA CONCRETO 1&quot;", "KG.", 82.0);
+            addRow("CLAVO CON ANCLA 1&quot;", "PZA.", 4.5);
+          </script>
+          <tr>
+            <td class="txt_caracteristicas_relleno" colspan="2" rowspan="4">
+              <div align="center">
+                <p class="listadoprecios">
+                  <br />
+                  &nbsp;
+                </p>
+              </div>
+            </td>
+            <td
+              bgcolor="#CCCCCC"
+              class="txt_caracteristicas_relleno"
+              rowspan="4"
+            ></td>
+            <td bgcolor="#CCCCCC" class="txt_caracteristicas_relleno"></td>
+            <td bgcolor="#CCCCCC" class="txt_caracteristicas_relleno"></td>
+          </tr>
+          <tr>
+            <th bgcolor="#CCCCCC" class="txt_caracteristicas_relleno">
+              SUBTOTAL
+            </th>
+            <td
+              align="center"
+              bgcolor="#CCCCCC"
+              class="txt_caracteristicas_relleno"
+            >
+              $
+              <input
+                class="txtLabel"
+                id="txtB37"
+                name="txtSub"
+                readonly="readonly"
+                size="6"
+                type="text"
+                value="0.00"
+              />
+            </td>
+          </tr>
+          <tr>
+            <th bgcolor="#CCCCCC" class="txt_caracteristicas_relleno">
+              <span class="listado_precios">IVA (16%)</span>
+            </th>
+            <td
+              align="center"
+              bgcolor="#CCCCCC"
+              class="txt_caracteristicas_relleno"
+            >
+              $
+              <input
+                class="txtLabel"
+                id="txtB38"
+                name="txtIVA"
+                readonly="readonly"
+                size="6"
+                type="text"
+                value="0.00"
+              />
+            </td>
+          </tr>
+          <tr>
+            <th bgcolor="#CCCCCC" class="txt_caracteristicas_relleno">TOTAL</th>
+            <th
+              align="center"
+              bgcolor="#CCCCCC"
+              class="txt_caracteristicas_relleno"
+            >
+              $
+              <input
+                class="txtLabel"
+                id="txtB39"
+                name="txtTOT"
+                readonly="readonly"
+                size="6"
+                type="text"
+                value="0.00"
+              />
+            </th>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+  </body>
+</html>

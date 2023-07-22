@@ -33,7 +33,7 @@ def clean_string(string):
 
 
 def download_images(query, folder, additional_search, limit=10):
-    print(query, folder, additional_search)
+    print(query, folder, additional_search, limit)
     downloader.download(query, folder, additional_search, limit=limit, output_dir="images",
                         adult_filter_off=True, force_replace=False, timeout=60)
 
@@ -83,8 +83,6 @@ for link in extract_menu_links(old_website_url):
     existing_collection = shopify.SmartCollection.find_first(title=collection.title)
     if not existing_collection:
         print("Collection does not exist, will create new")
-        continue
-
         collection.published_scope = "global"
 
         collection.rules = {
@@ -127,9 +125,7 @@ for link in extract_menu_links(old_website_url):
 
         if len(product['file_paths']) > 0:
             pdf_url = old_website_url+"/"+product['file_paths'][0]
-            print("before striping ", product["product_description"])
             product_description = product["product_description"].replace("DESCARGAR FICHA TÉCNICA","")
-            print("before striping ", product_description)
             new_product.body_html = new_product.body_html = (
                                     f'<p>{product_description}</p>\n\n'
                                     f'<p><a href={pdf_url} style="font-size: 1.875rem;" '
@@ -141,6 +137,6 @@ for link in extract_menu_links(old_website_url):
         print("Saving product")
         new_product.save()
 
-        download_images(product_title, product_title_cleaned, new_product.vendor, limit=10)
+        download_images(product_title, product_title_cleaned, new_product.vendor)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
             save_image_to_shopify(f'{image}', new_product.id, position=i)
