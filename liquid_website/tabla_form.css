@@ -1,0 +1,53 @@
+/* Form container */
+.form-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 7px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-family: Arial, sans-serif;
+  font-size: 14px; /* Reduced font size */
+}
+
+/* Table styles */
+#articulosTable {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+#articulosTable th, #articulosTable td {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+#articulosTable th {
+  padding: 2px; /* Reduced padding */
+  background-color: #f2f2f2;
+}
+
+/* Input and textarea styles */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 2px;
+  margin-bottom: 8px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+/* Button styles */
+button[type="submit"] {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+/* Form total section styles */
+.txt_caracteristicas_relleno {
+  text-align: right;
+  font-weight: bold;
+}
