@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Responsive Form and Table with Bootstrap</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Include Bootstrap CSS -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <!-- Include your custom JavaScript files -->
+    
+  </head>
+  <body onload="addAllRows()">
+    <div class="container mt-4">
+      <h2>Responsive Form</h2>
+      <form id="plafon" method="post" name="plafon" onsubmit="event.preventDefault(); updateValues();">
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="name">Largo:</label>
+            <input name="txtLargo" type="text" class="form-control" value="0.0">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="email">Ancho:</label>
+            <input name="txtAncho" type="text" class="form-control" value="0.0">
+          </div>
+          <div class="form-group col-md-4">
+            <label for="area">Área:</label>
+            <input class="form-control txtLabel" name="txtArea" readonly type="text" value="0.0">
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+
+      <h2 class="mt-4">Responsive Table</h2>
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Artículo</th>
+              <th>Cantidad</th>
+              <th>Unidad</th>
+              <th>Precio Unitario</th>
+              <th>Precio Total</th>
+            </tr>
+          </thead>
+          <tbody>
+        
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Include Bootstrap JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="custom_boot.js"></script>
+    <script src="update_values.js"></script>
+  </body>
+</html>
