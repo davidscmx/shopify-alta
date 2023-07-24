@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
+    />
+    <script type="text/javascript">
+      function UpdateValues() {
+        var tf = document.cuadricula;
+        var A = tf.txtAncho.value; //D12
+        var B = tf.txtLargo.value; //D10
+        var area, placa; //G11
+        area = Number(A) * Number(B);
+        placa = tf.txtPlaca.value;
+        tf.txtArea.value = area;
+        //cantidades
+        tf.txtB.value = Math.ceil((2 * Number(A) + 2 * Number(B)) / 3.66);
+        tf.txtB2.value = Math.ceil(Number(area) / Number(placa));
+        tf.txtB3.value = Math.ceil(Number(area) * 0.22);
+        tf.txtB4.value = Math.ceil(Number(area) / 0.744);
+        if (tf.ddlPlaca.selectedIndex < 10) {
+          tf.txtB5.value = Math.ceil(Number(area) / 0.744);
+        } else {
+          tf.txtB5.value = Math.ceil(0);
+        }
+
+        tf.txtB6.value = Math.ceil(Number(5)); //NO HAY FORMULA
+        tf.txtC2.value = tf.ddlPlaca.options[tf.ddlPlaca.selectedIndex].value;
+
+        //totales
+        tf.txtD.value = Number(
+          Number(tf.txtB.value) * Number(tf.txtC.value)
+        ).toFixed(2);
+        tf.txtD2.value = Number(
+          Number(tf.txtB2.value) * Number(tf.txtC2.value)
+        ).toFixed(2);
+        tf.txtD3.value = Number(
+          Number(tf.txtB3.value) * Number(tf.txtC3.value)
+        ).toFixed(2);
+        tf.txtD4.value = Number(
+          Number(tf.txtB4.value) * Number(tf.txtC4.value)
+        ).toFixed(2);
+        tf.txtD5.value = Number(
+          Number(tf.txtB5.value) * Number(tf.txtC5.value)
+        ).toFixed(2);
+        tf.txtD6.value = Number(
+          Number(tf.txtB6.value) * Number(tf.txtC6.value)
+        ).toFixed(2);
+
+        //finalizar operaciones
+        tf.txtSub.value = Number(
+          Number(tf.txtD.value) +
+            Number(tf.txtD2.value) +
+            Number(tf.txtD3.value) +
+            Number(tf.txtD4.value) +
+            Number(tf.txtD5.value) +
+            Number(tf.txtD6.value)
+        ).toFixed(2);
+        tf.txtIVA.value = Number(Number(tf.txtSub.value) * 0.16).toFixed(2);
+        tf.txtTOT.value = Number(
+          Number(tf.txtSub.value) + Number(tf.txtIVA.value)
+        ).toFixed(2);
+      }
+
+      function doSelect() {
+        var tf = document.cuadricula;
+        if (tf.ddlPlaca.selectedIndex < 10) {
+          tf.txtPlaca.value = Number(0.61 * 0.61).toFixed(2);
+        } else {
+          tf.txtPlaca.value = Number(0.61 * 1.22).toFixed(2);
+        }
+        tf.txtDesc2.value = tf.ddlPlaca.options[tf.ddlPlaca.selectedIndex].text;
+        UpdateValues();
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <form id="cuadricula" method="post" name="cuadricula">
+        <div class="row">
+          <div class="col-md-6">
+            <table class="table table-bordered table-striped">
+              <tbody>
+                <tr>
+                  <th colspan="4">
+                    <select
+                      name="ddlPlaca"
+                      onchange="doSelect()"
+                      tabindex="3"
+                      class="form-control"
+                    >
+                      <option value="304">FROST 414 0.61m x 0.61m</option>
+                      <option value="304">GLACIAR 707 0.61m x 0.61m</option>
+                      <option value="304">SANDRIFT 808 0.61m x 0.61m</option>
+                      <option value="128">FISSURED 506 0.61m x 0.61m</option>
+                      <option value="197">FISSURED 562 0.61m x 1.22m</option>
+                      <option value="139">RADAR 2202 0.61m x 0.61m</option>
+                      <option value="230">RADAR 2410 0.61m x 1.22m</option>
+                      <option value="283">ECLIPSE 76775 0.61m x 0.61m</option>
+                      <option value="376">
+                        MARS LS 86785 0.61m x 0.61m LS
+                      </option>
+                      <option value="283">
+                        MILLENIA 76705 0.61m x 0.61m LS
+                      </option>
+                      <option value="89">
+                        TEXTURIZADA ASTRAL / SOLAR 3/8" 1.22m x 0.61m
+                      </option>
+                      <option value="590">
+                        CLEAN ROOM 56091A 0.61m x 1.22m
+                      </option>
+                      <option value="199">OLIMPIA 4221 0.61m x 0.61m LS</option>
+                      <option value="210">
+                        PLACA TABLAROCA C/VINIL 3270 1.22m x 0.61m
+                      </option>
+                    </select>
+                  </th>
+                </tr>
+                <tr>
+                  <th class="txt_liga_presupuestos">Largo:</th>
+                  <td class="listadodelinks">
+                    <input
+                      name="txtLargo"
+                      onblur="if(this.value == '') {this.value = '0'}"
+                      onfocus="if(this.value == '0') {this.value = ''}"
+                      onkeyup="UpdateValues()"
+                      size="5"
+                      tabindex="1"
+                      type="text"
+                      value="0"
+                      class="form-control"
+                    />
+                  </td>
+                  <th class="txt_liga_presupuestos">Área de la placa:</th>
+                  <td class="listadodelinks">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtPlaca"
+                      readonly="readonly"
+                      size="4"
+                      type="text"
+                      value="0.37"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th class="txt_liga_presupuestos">Ancho:</th>
+                  <td class="listadodelinks">
+                    <input
+                      name="txtAncho"
+                      onblur="if(this.value == '') {this.value = '0'}"
+                      onfocus="if(this.value == '0') {this.value = ''}"
+                      onkeyup="UpdateValues()"
+                      size="5"
+                      tabindex="2"
+                      type="text"
+                      value="0"
+                      class="form-control"
+                    />
+                  </td>
+                  <th class="txt_liga_presupuestos">Área Total:</th>
+                  <td class="listadodelinks">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtArea"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="0"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-6">
+            <table class="table table-bordered table-striped">
+              <tbody>
+                <tr>
+                  <th class="txt_cars" colspan="3">ARTÍCULO</th>
+                  <th class="txt_cars">CANTIDAD</th>
+                  <th class="txt_cars">UNIDAD</th>
+                  <th class="txt_cars">
+                    PRECIO<br />
+                    UNITARIO
+                  </th>
+                  <th class="txt_cars">
+                    PRECIO<br />
+                    TOTAL
+                  </th>
+                </tr>
+                <tr>
+                  <td class="txt_fill" colspan="3">
+                    ÁNGULO PERIMETRAL DONN x 3.66mts
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtB"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="0"
+                    />
+                  </td>
+                  <td class="txt_fill">Pza.</td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtC"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="189.00"
+                    />
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtD"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="txt_fill" colspan="3">
+                    <!--Do not remove this input-->
+                    <textarea
+                      class="txt_cars_campos form-control"
+                      name="txtDesc2"
+                      readonly="readonly"
+                      style="word-wrap: break-word; overflow-y: hidden;"
+                      rows="2"
+                    >
+FROST 414 0.61m x 0.61m
+					</textarea
+                    >
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtB2"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="0"
+                    />
+                  </td>
+                  <td class="txt_fill">Pza.</td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtC2"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="304.00"
+                    />
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtD2"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="txt_fill" colspan="3">
+                    TEE PRINCIPAL DONN x 3.66mts
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtB3"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="0"
+                    />
+                  </td>
+                  <td class="txt_fill">Pza.</td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtC3"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="335.00"
+                    />
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtD3"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="txt_fill" colspan="3">
+                    TEE CONECTORA DONN x 1.22mts
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtB4"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="0"
+                    />
+                  </td>
+                  <td class="txt_fill">Pza.</td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtC4"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="97.00"
+                    />
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtD4"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="txt_fill" colspan="3">
+                    TEE CONECTORA DONN x 0.61mts
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtB5"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="0"
+                    />
+                  </td>
+                  <td class="txt_fill">Pza.</td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtC5"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="48.00"
+                    />
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtD5"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="txt_fill" colspan="3">ALAMBRE CAL.14</td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtB6"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="0"
+                    />
+                  </td>
+                  <td class="txt_fill">Kg.</td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtC6"
+                      readonly="readonly"
+                      size="5"
+                      type="text"
+                      value="53.00"
+                    />
+                  </td>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      name="txtD6"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <td class="txt_fill" colspan="5" rowspan="4">
+                    <div></div>
+                  </td>
+                  <td class="txt_fill"></td>
+                  <td class="txt_fill"></td>
+                </tr>
+                <tr>
+                  <th class="txt_fill">Subtotal</th>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      id="txtB37"
+                      name="txtSub"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th class="txt_fill">
+                    <span class="listado_precios">IVA (16%)</span>
+                  </th>
+                  <td class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      id="txtB38"
+                      name="txtIVA"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </td>
+                </tr>
+                <tr>
+                  <th class="txt_fill">Total</th>
+                  <th class="txt_fill">
+                    <input
+                      class="txtLabel form-control"
+                      id="txtB39"
+                      name="txtTOT"
+                      readonly="readonly"
+                      size="6"
+                      type="text"
+                      value="0.00"
+                    />
+                  </th>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </form>
+    </div>
+    <!-- Add Bootstrap JS and jQuery -->
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+
+
+  </body>
+</html>

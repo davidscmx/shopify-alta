@@ -4,10 +4,9 @@ function removeNonNumbersAndParseFloat(inputString) {
   return floatValue;
 }
 
-function updateValues(event) {
-  
-  let width = parseFloat(document.getElementsByName("txtAncho")[0].value); // D12
-  let length = parseFloat(document.getElementsByName("txtLargo")[0].value); // D10
+function updateValues() {
+  let width = parseFloat(document.getElementsByName("txtAncho")[0].value);
+  let length = parseFloat(document.getElementsByName("txtLargo")[0].value);
 
   document.getElementsByName("txtLargo")[0].value = length + " m";
   document.getElementsByName("txtAncho")[0].value = width + " m";
