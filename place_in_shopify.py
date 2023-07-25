@@ -32,7 +32,7 @@ def clean_string(string):
     return string
 
 
-def download_images(query, folder, additional_search, limit=10):
+def download_images(query, folder, additional_search, limit=14):
     print(query, folder, additional_search, limit)
     downloader.download(query, folder, additional_search, limit=limit, output_dir="images",
                         adult_filter_off=True, force_replace=False, timeout=60)
@@ -69,6 +69,22 @@ shopify.ShopifyResource.activate_session(api_session)
 # Print the result
 old_website_url = "https://www.altamateriales.com.mx"
 
+#def get_additional_search_term(product_title, section):
+def create_list_from_newlines(input_list):
+    # Create an empty list to store the result
+    result_list = []
+
+    # Iterate through each string in the input list
+    for string in input_list:
+        # Split the string into substrings using the new line character '\n' as the delimiter
+        substrings = string.split('\n')
+        
+        # Extend the result_list with the substrings to add them as separate elements
+        result_list.extend(substrings)
+    
+    return result_list
+
+
 for link in extract_menu_links(old_website_url):
     section = link[0]
     url = link[1]
@@ -76,37 +92,45 @@ for link in extract_menu_links(old_website_url):
     response = requests.get(url)
     products = extract_product_info(response.content)
 
-    collection = shopify.SmartCollection()
-    collection.title = section
-    collection.template_suffix = "sin-precio-ni-agotado"
-
-    existing_collection = shopify.SmartCollection.find_first(title=collection.title)
-    if not existing_collection:
-        print("Collection does not exist, will create new")
-        collection.published_scope = "global"
-
-        collection.rules = {
-            'column': 'type',
-            'relation': 'equals',
-            'condition': section
-        },
-
-        collection.save()
+    #collection = shopify.SmartCollection()
+    #collection.title = section
+    #collection.template_suffix = "sin-precio-ni-agotado"
+    
+    #print(section)
+    #existing_collection = shopify.SmartCollection.find_first(title=collection.title)
+    #if not existing_collection:
+    #    print("Collection does not exist, will create new")
+    #    collection.published_scope = "global"
+#
+    #    collection.rules = {
+    #        'column': 'type',
+    #        'relation': 'equals',
+    #        'condition': section
+    #    },
+#
+    #    collection.save()
 
     for product in products:
         product_title = product['product_name']
+        print(product_title)
+        possible_variant = create_list_from_newlines(product["characteristics"])
+        print(possible_variant)
+
         if not product_title:
             continue
         product_title_cleaned = clean_string(product_title)
 
         # Plafon
-        if section == "plafones_usg":
-            product_title = "Plafón "+product_title
+        if section == "PLAFONES USG":
+            product_title = "Plafón "+product_title+" USG"
 
-        if product_title_cleaned == "aislantes":
+        if section == "PERFILES METÁLICOS USG":
+            product_title = "Perfil Metalico "+product_title+" USG"
+
+        if section == "AISLANTES":
             product_title = "Aislante "+product_title
 
-        if product_title_cleaned == "conectores_para_madera":
+        if product_title_cleaned == "CONECTORES PARA MADERA":
             product_title = "USP  "+product_title
 
         # Create a new product
@@ -118,6 +142,10 @@ for link in extract_menu_links(old_website_url):
         if existing_product:
             print("Product already exists, will not add it again")
             continue
+        
+        new_product.options = [
+           {'name': 'Size'},  # Option 1
+        ]
 
         new_product.vendor = get_product_vendor(section, product_title)
         new_product.product_type = section
@@ -134,9 +162,44 @@ for link in extract_menu_links(old_website_url):
         else:
             new_product.body_html = f'<p>{product["product_description"]}</p>'
 
-        print("Saving product")
+        new_product.options = [
+           {'name': 'Size'},  # Option 1
+        ]
         new_product.save()
 
-        download_images(product_title, product_title_cleaned, new_product.vendor)
+        
+        if new_product.errors:
+            print("Product was not saved successfully.")
+            print(new_product.errors.full_messages())
+        else:
+            print("Product was saved successfully.")
+        
+
+        variants = []
+        for my_var in possible_variant:
+            if "Medida:" in my_var: 
+                my_var = my_var.replace("Medida: ","")
+
+                variant = shopify.Variant()
+                variant.product_id = new_product.id
+                variant.option1 = my_var
+                if variant.save():
+                    print('Successfully created a variant')
+                else:
+                    print('Failed to create a variant')
+                    print(variant.errors.full_messages())
+
+        # Delete the default variant
+        default_variant = [v for v in new_product.variants if v.title == 'Default Title']
+        if default_variant:
+            default_variant[0].destroy()
+
+        additional_search_str = None
+        if section == "TABLAROCA":
+            additional_search_str = "USG"
+            
+        download_images(product_title, product_title_cleaned, additional_search_str )
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
-            save_image_to_shopify(f'{image}', new_product.id, position=i)
+            save_image_to_shopify(f'{image}', new_product.id, position=i) 
+    
+    break
