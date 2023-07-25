@@ -78,60 +78,114 @@ def create_list_from_newlines(input_list):
     for string in input_list:
         # Split the string into substrings using the new line character '\n' as the delimiter
         substrings = string.split('\n')
-        
+
         # Extend the result_list with the substrings to add them as separate elements
         result_list.extend(substrings)
-    
+
     return result_list
 
 
-for link in extract_menu_links(old_website_url):
+def improve_titles(section, product_title, product_title_cleaned):
+    # Plafon
+    if section == "PLAFONES USG":
+        product_title = "Plafón "+product_title+" USG"
+    if section == "AISLANTES":
+        product_title = "Aislante "+product_title
+    if product_title_cleaned == "CONECTORES PARA MADERA":
+        product_title = "USP  "+product_title
+
+    return product_title
+
+
+def join_elements_with_space(input_list):
+    # Ensure the list has an even number of elements
+    if len(input_list) % 2 != 0:
+        return input_list
+
+    # Initialize an empty list to store the joined strings
+    joined_list = []
+
+    # Iterate over the input_list by steps of 2
+    for i in range(0, len(input_list), 2):
+        input_list[i] = input_list[i].replace('\xa0', '')
+        input_list[i + 1] = input_list[i + 1].replace('\xa0', '')
+
+        joined_string = input_list[i] + " " + input_list[i + 1]
+        joined_list.append(joined_string)
+
+    return joined_list
+
+
+def create_collection(section):
+    collection = shopify.SmartCollection()
+    collection.title = section
+    collection.template_suffix = "sin-precio-ni-agotado"
+
+    existing_collection = shopify.SmartCollection.find_first(title=collection.title)
+    if not existing_collection:
+        print("Collection does not exist, will create new")
+        collection.published_scope = "global"
+
+        collection.rules = {
+            'column': 'type',
+            'relation': 'equals',
+            'condition': section
+        },
+
+        collection.save()
+    else:
+        print("Collection already exists.")
+
+
+def process_string_cal(s):
+    # Replace commas and "y" with spaces to simplify splitting
+    s = s.replace(',', '').replace(' y ', ' ').replace(".", "")
+    # Split the string into words
+    words = s.split()
+    # Prepare a list to store the results
+    result = []
+
+    # Iterate over the words
+    for i in range(len(words)):
+        # Check if the word is numeric
+        if words[i].isdigit():
+            # Combine "Cal." with the number and add to the results
+            result.append("Cal. " + words[i])
+
+    return result
+
+already_processed = ["TABLAROCA"]
+
+for link_number, link in enumerate(extract_menu_links(old_website_url)):
+    if link_number > 1:
+        break
+
     section = link[0]
     url = link[1]
-
+    if section in already_processed:
+        continue
     response = requests.get(url)
     products = extract_product_info(response.content)
 
-    #collection = shopify.SmartCollection()
-    #collection.title = section
-    #collection.template_suffix = "sin-precio-ni-agotado"
-    
-    #print(section)
-    #existing_collection = shopify.SmartCollection.find_first(title=collection.title)
-    #if not existing_collection:
-    #    print("Collection does not exist, will create new")
-    #    collection.published_scope = "global"
-#
-    #    collection.rules = {
-    #        'column': 'type',
-    #        'relation': 'equals',
-    #        'condition': section
-    #    },
-#
-    #    collection.save()
+    create_collection(section)
 
     for product in products:
         product_title = product['product_name']
-        print(product_title)
         possible_variant = create_list_from_newlines(product["characteristics"])
+        if product_title != "Canal de Amarre":
+            continue
+
+        if section == "PERFILES METÁLICOS USG":
+            possible_variant = join_elements_with_space(possible_variant)
+            if product_title == "Alambre Galvanizado":
+                possible_variant = process_string_cal(possible_variant[0])
+
+        print(product_title)
         print(possible_variant)
 
         if not product_title:
             continue
         product_title_cleaned = clean_string(product_title)
-
-        # Plafon
-        if section == "PLAFONES USG":
-            product_title = "Plafón "+product_title+" USG"
-
-        if section == "PERFILES METÁLICOS USG":
-            product_title = "Perfil Metalico "+product_title+" USG"
-
-        if section == "AISLANTES":
-            product_title = "Aislante "+product_title
-
-        if product_title_cleaned == "CONECTORES PARA MADERA":
-            product_title = "USP  "+product_title
 
         # Create a new product
         new_product = shopify.Product()
@@ -142,7 +196,7 @@ for link in extract_menu_links(old_website_url):
         if existing_product:
             print("Product already exists, will not add it again")
             continue
-        
+
         new_product.options = [
            {'name': 'Size'},  # Option 1
         ]
@@ -167,27 +221,26 @@ for link in extract_menu_links(old_website_url):
         ]
         new_product.save()
 
-        
         if new_product.errors:
             print("Product was not saved successfully.")
             print(new_product.errors.full_messages())
         else:
             print("Product was saved successfully.")
-        
 
         variants = []
         for my_var in possible_variant:
-            if "Medida:" in my_var: 
-                my_var = my_var.replace("Medida: ","")
+            if "Medida:" in my_var:
+                my_var = my_var.replace("Medida: ", "")
 
-                variant = shopify.Variant()
-                variant.product_id = new_product.id
-                variant.option1 = my_var
-                if variant.save():
-                    print('Successfully created a variant')
-                else:
-                    print('Failed to create a variant')
-                    print(variant.errors.full_messages())
+            variant = shopify.Variant()
+            variant.product_id = new_product.id
+            variant.option1 = my_var
+
+            if variant.save():
+                print('Successfully created a variant')
+            else:
+                print('Failed to create a variant')
+                print(variant.errors.full_messages())
 
         # Delete the default variant
         default_variant = [v for v in new_product.variants if v.title == 'Default Title']
@@ -195,11 +248,9 @@ for link in extract_menu_links(old_website_url):
             default_variant[0].destroy()
 
         additional_search_str = None
-        if section == "TABLAROCA":
+        if section == "TABLAROCA" or section == "PERFILES METÁLICOS USG":
             additional_search_str = "USG"
-            
-        download_images(product_title, product_title_cleaned, additional_search_str )
+
+        download_images(product_title, product_title_cleaned, additional_search_str)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
-            save_image_to_shopify(f'{image}', new_product.id, position=i) 
-    
-    break
+            save_image_to_shopify(f'{image}', new_product.id, position=i)
