@@ -11,10 +11,10 @@ function addRow(productName, unit, pricePerUnit) {
   var newRow = document.createElement("tr");
   newRow.innerHTML = `
       <td>${productName}</td>
-      <td><input class="form-control txtLabel" name="txtB${addRowCallCounter}" readonly size="5" type="text" value="0.00" /></td>
+      <td><input class="form-control txtLabel" name="txtB${addRowCallCounter}" readonly size="4" type="text" value="0.00" /></td>
       <td>${unit}</td>
-      <td><input class="form-control txtLabel" name="txtC${addRowCallCounter}" readonly size="6" type="text" value="${pricePerUnit}" /></td>
-      <td><input class="form-control txtLabel" name="txtD${addRowCallCounter}" readonly size="8" type="text" value="0.00" /></td>
+      <td><input class="form-control txtLabel" name="txtC${addRowCallCounter}" readonly size="4" type="text" value="${pricePerUnit}" /></td>
+      <td><input class="form-control txtLabel" name="txtD${addRowCallCounter}" readonly size="10" type="text" value="0.00" /></td>
       `;
 
   tableBody.appendChild(newRow);
@@ -29,7 +29,7 @@ function addSummaryRows() {
   const summaryRows = `
     <tr>
       <td colspan="3"></td>
-      <th>SUBTOTAL</th>
+      <th>Subtotal</th>
       <td class="text-center">
           <input
               class="form-control-plaintext"
@@ -95,5 +95,5 @@ function addAllRows() {
 
 window.onload = function () {
   addAllRows();
-  addSummaryRows();   
+  addSummaryRows();
 };

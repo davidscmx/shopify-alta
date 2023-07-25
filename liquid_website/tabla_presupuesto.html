@@ -4,30 +4,50 @@
     <title>Responsive Form and Table with Bootstrap</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- Include Bootstrap CSS -->
     <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM"
+      crossorigin="anonymous"
     />
-    <!-- Include your custom JavaScript files -->
-    
   </head>
   <body onload="addAllRows()">
     <div class="container mt-4">
       <h2>Responsive Form</h2>
-      <form id="plafon" method="post" name="plafon" onsubmit="event.preventDefault(); updateValues();">
+      <form
+        id="plafon"
+        method="post"
+        name="plafon"
+        onsubmit="event.preventDefault(); updateValues();"
+      >
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="name">Largo:</label>
-            <input name="txtLargo" type="text" class="form-control" value="0.0">
+            <input
+              name="txtLargo"
+              type="text"
+              class="form-control"
+              value="0.0"
+            />
           </div>
           <div class="form-group col-md-4">
             <label for="email">Ancho:</label>
-            <input name="txtAncho" type="text" class="form-control" value="0.0">
+            <input
+              name="txtAncho"
+              type="text"
+              class="form-control"
+              value="0.0"
+            />
           </div>
           <div class="form-group col-md-4">
             <label for="area">Área:</label>
-            <input class="form-control txtLabel" name="txtArea" readonly type="text" value="0.0">
+            <input
+              class="form-control txtLabel"
+              name="txtArea"
+              readonly
+              type="text"
+              value="0.0"
+            />
           </div>
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
@@ -46,17 +66,18 @@
             </tr>
           </thead>
           <tbody>
-        
+            <!-- Rows are added dynamically here -->
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Include Bootstrap JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="custom_boot.js"></script>
-    <script src="update_values.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+      crossorigin="anonymous"
+    ></script>
+    <script src="tabla_add_rows.js"></script>
+    <script src="tabla_update_values.js"></script>
   </body>
 </html>
