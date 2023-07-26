@@ -50,7 +50,7 @@ def save_image_to_shopify(image_path, product_id, position=1):
         'attachment': base64.b64encode(image_data).decode('utf-8')
     })
 
-    # Save the new image to the product
+    # Save the new image to the productbreak
     new_image.save()
 
 
@@ -100,6 +100,8 @@ def improve_titles(section, product_title, product_title_cleaned):
 def join_elements_with_space(input_list):
     # Ensure the list has an even number of elements
     if len(input_list) % 2 != 0:
+        input_list = [item.replace('\xa0', '') for item in input_list]
+
         return input_list
 
     # Initialize an empty list to store the joined strings
@@ -114,6 +116,16 @@ def join_elements_with_space(input_list):
         joined_list.append(joined_string)
 
     return joined_list
+
+def remove_from_descargar(text):
+    index_descargar = text.find('DESCARGAR')
+    if index_descargar != -1:
+        # If 'DESCARGAR' is found, remove everything from its position onward
+        result = text[:index_descargar]
+    else:
+        # If 'DESCARGAR' is not found, return the original text
+        result = text
+    return result.strip()  # Remove leading and trailing whitespaces (optional)
 
 
 def create_collection(section):
@@ -154,16 +166,16 @@ def process_string_cal(s):
 
     return result
 
-already_processed = ["TABLAROCA"]
+already_processed = ["TABLAROCA", "PERFILES METÁLICOS USG"]
 
 for link_number, link in enumerate(extract_menu_links(old_website_url)):
-    if link_number > 1:
-        break
-
+    
     section = link[0]
     url = link[1]
+    
     if section in already_processed:
         continue
+    
     response = requests.get(url)
     products = extract_product_info(response.content)
 
@@ -171,18 +183,24 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
 
     for product in products:
         product_title = product['product_name']
+        print("original ", product["characteristics"])
         possible_variant = create_list_from_newlines(product["characteristics"])
-        if product_title != "Canal de Amarre":
-            continue
-
+        
         if section == "PERFILES METÁLICOS USG":
             possible_variant = join_elements_with_space(possible_variant)
             if product_title == "Alambre Galvanizado":
                 possible_variant = process_string_cal(possible_variant[0])
+        if section == "ADHESIVOS Y COMPUESTOS":
+            
+            if product_title == "Cinta Para DUROCK®":
+                possible_variant = [item for item in possible_variant if item != '']
+            else:
+                possible_variant = join_elements_with_space(possible_variant)
 
         print(product_title)
         print(possible_variant)
 
+        
         if not product_title:
             continue
         product_title_cleaned = clean_string(product_title)
@@ -200,21 +218,26 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
         new_product.options = [
            {'name': 'Size'},  # Option 1
         ]
-
         new_product.vendor = get_product_vendor(section, product_title)
+        print(new_product.vendor)
         new_product.product_type = section
         new_product.template_suffix = "sin-precio-ficha-tec"
-
+        
+        product_description = remove_from_descargar(product["product_description"])
+        html_string = f'<p>{product_description}</p>'                            
+        
         if len(product['file_paths']) > 0:
-            pdf_url = old_website_url+"/"+product['file_paths'][0]
-            product_description = product["product_description"].replace("DESCARGAR FICHA TÉCNICA","")
-            new_product.body_html = new_product.body_html = (
-                                    f'<p>{product_description}</p>\n\n'
-                                    f'<p><a href={pdf_url} style="font-size: 1.875rem;" '
-                                    f'target="_blank" rel="noopener noreferrer">'
-                                    f'Descargar Ficha Técnica</a></p>')
-        else:
-            new_product.body_html = f'<p>{product["product_description"]}</p>'
+            for pdf_name, pdf_url in product['file_paths'].items(): 
+                pdf_url = old_website_url+"/"+pdf_url
+                pdf_name = pdf_name.replace("DESCARGAR FICHA TÉCNICA","").title()
+                
+                str_to_be_added = (f'\n\n<p><a href={pdf_url} style="font-size: 1.875rem;" '
+                                  f'target="_blank" rel="noopener noreferrer">'
+                                  f'Descargar Ficha Técnica{pdf_name}</a></p>\n')
+
+                html_string+= str_to_be_added
+          
+        new_product.body_html = html_string
 
         new_product.options = [
            {'name': 'Size'},  # Option 1
@@ -248,9 +271,11 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
             default_variant[0].destroy()
 
         additional_search_str = None
-        if section == "TABLAROCA" or section == "PERFILES METÁLICOS USG":
+        if section == "TABLAROCA" or section == "PERFILES METÁLICOS USG" or section=="ADHESIVOS Y COMPUESTOS":
             additional_search_str = "USG"
 
         download_images(product_title, product_title_cleaned, additional_search_str)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
             save_image_to_shopify(f'{image}', new_product.id, position=i)
+        
+    break

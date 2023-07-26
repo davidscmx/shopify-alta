@@ -39,7 +39,7 @@ def extract_product_info(html):
             product_description = ''
             characteristics = []
             images = []
-            file_paths = []
+            file_paths = {}
 
             title_element = table.find('td', class_='txt_tabla_titulo')
             if title_element:
@@ -47,10 +47,16 @@ def extract_product_info(html):
                 product_name = product_name.replace('\t', '')
 
             description_element = table.find('td', class_='txt_productos')
+            description_element1 = table.find('td', class_='txt_productos_ancho')
+
             if description_element:
                 product_description = description_element.text.strip()
                 product_description = product_description.replace('\t', '')
+            elif description_element1:
+                product_description = description_element1.text.strip()
+                product_description = product_description.replace('\t', '')
 
+            
             characteristics_elements = table.find_all('td', class_='txt_caracteristicas_relleno')
             for characteristic_element in characteristics_elements:
                 characteristic_element = characteristic_element.text.strip()
@@ -61,9 +67,9 @@ def extract_product_info(html):
             if image_element:
                 images.append(image_element['src'])
 
-            file_element = table.find('a')
-            if file_element:
-                file_paths.append(file_element['href'])
+            file_elements = table.find_all('a')
+            for file_element in file_elements:
+                file_paths[file_element.text] = file_element['href']
 
             # Create a dictionary to store the extracted information
             product_info = {
