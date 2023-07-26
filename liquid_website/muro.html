@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bootstrap Form</title>
+  <title></title>
   <!-- Add Bootstrap CSS link -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script type="text/javascript">
@@ -15,18 +15,18 @@
         var B = tf.txtLargo.value; //D10
         var area;                  //G11
         area=(Number(A)*Number(B)*Number(tf.ddlCaras.value));
-        tf.txtArea.value=area; 
+        tf.txtArea.value=area;
         //cantidades
         tf.txtB.value=Math.ceil(Number(area)/3);
         tf.txtB2.value=Math.ceil(Number(B)/0.61);
         tf.txtB3.value=Math.ceil((Number(B)*2)/3.05);
         tf.txtB4.value=Math.ceil(Number(area)/28);
         tf.txtB5.value=Math.ceil(Number(area)*.02);
-        tf.txtB6.value=Math.round((tf.txtB.value*30/100),0)*100;	
+        tf.txtB6.value=Math.round((tf.txtB.value*30/100),0)*100;
         tf.txtB7.value=Math.ceil(Number(area*.02))*100;
         tf.txtB8.value=Number(area/128).toFixed(2);
-    
-    
+
+
         //totales
         tf.txtD.value=Number(Number(tf.txtB.value)*Number(tf.txtC.value)).toFixed(2);
         tf.txtD2.value=Number(Number(tf.txtB2.value)*Number(tf.txtC2.value)).toFixed(2);
@@ -35,7 +35,7 @@
         tf.txtD5.value=Number(Number(tf.txtB5.value)*Number(tf.txtC5.value)).toFixed(2);
         tf.txtD6.value=Number(Number(tf.txtB6.value)*Number(tf.txtC6.value)).toFixed(2);
         tf.txtD7.value=Number(Number(tf.txtB7.value)*Number(tf.txtC7.value)).toFixed(2);
-        tf.txtD8.value=Number(Number(tf.txtB8.value)*Number(tf.txtC8.value)).toFixed(2);	
+        tf.txtD8.value=Number(Number(tf.txtB8.value)*Number(tf.txtC8.value)).toFixed(2);
         //finalizar operaciones
         tf.txtSub.value= 	Number(
                             Number(tf.txtD.value)+Number(tf.txtD2.value)+Number(tf.txtD3.value)+
@@ -44,51 +44,57 @@
                             ).toFixed(2);
         tf.txtIVA.value=Number(Number(tf.txtSub.value)*.16).toFixed(2);
         tf.txtTOT.value=Number(Number(tf.txtSub.value)+Number(tf.txtIVA.value)).toFixed(2);
-    }						
-    
+    }
+
     </script>
 </head>
 
 <body>
-
+  <h2> Ingresa las medidas (Largo Y Alto) de tu proyecto en las cajas siguientes: </h2>
   <div class="container mt-4">
     <form id="muro" method="post" name="muro">
       <div class="row mb-3">
-        <div class="col-12 col-md-6">
-          <p>Ingresa las medidas<br>(LARGO Y ALTO) de tu<br>
-            proyecto en las cajas siguientes:</p>
+        <div class="col-6 col-md-3">
+          <strong>Largo:</strong>
+          <div class="input-group">
+            <input class="txtInput form-control" name="txtLargo" id="txtLargo" onblur="if(this.value == '') {this.value = '0'}" onfocus="if(this.value == '0') {this.value = ''}" onkeyup="UpdateValues()" class="form-control" size="5" tabindex="1" type="text" value="0">
+            <div class="txtInput input-group-append">
+              <span class="txtInput input-group-text">m</span>
+            </div>
+          </div>
         </div>
         <div class="col-6 col-md-3">
-          <label for="txtLargo" class="txt_liga_presupuestos">LARGO:</label>
-          <input name="txtLargo" id="txtLargo" onblur="if(this.value == '') {this.value = '0'}" onfocus="if(this.value == '0') {this.value = ''}" onkeyup="UpdateValues()" class="form-control" size="5" tabindex="1" type="text" value="0"> m
-        </div>
-        <div class="col-6 col-md-3">
-          <label for="txtAncho" class="txt_liga_presupuestos">ALTO:</label>
-          <input name="txtAncho" id="txtAncho" onblur="if(this.value == '') {this.value = '0'}" onfocus="if(this.value == '0') {this.value = ''}" onkeyup="UpdateValues()" class="form-control" size="5" tabindex="2" type="text" value="0"> m
+          <strong>Alto:</strong>
+            <div class="input-group">
+              <input class="txtInput form-control" name="txtAncho" id="txtAncho" onblur="if(this.value == '') {this.value = '0'}" onfocus="if(this.value == '0') {this.value = ''}" onkeyup="UpdateValues()" class="form-control" size="5" tabindex="2" type="text" value="0">
+              <div class="txtInput input-group-append">
+                <span class="txtInput input-group-text">m</span>
+              </div>
+            </div>
         </div>
       </div>
-      <div class="col-6 col-md-4">
-        <strong>ÁREA:</strong>
+      <div class="col-6 col-md-3">
+        <strong>Área:</strong>
         <div class="input-group">
-          <input class="txtLabel form-control" name="txtArea" readonly="readonly" size="5" type="text" value="0">
-          <div class="input-group-append">
-            <span class="input-group-text">m<sup>2</sup></span>
+          <input class="txtInput form-control" name="txtArea" readonly="readonly" size="5" type="text" value="0">
+          <div class="txtInput input-group-append">
+            <span class="txtInput input-group-text">m<sup>2</sup></span>
           </div>
         </div>
       </div>
 
       <div class="row mb-3">
-        <div class="col-12">
+        <div class="col-3">
           <label for="ddlCaras">Selecciona el número de caras:</label>
-          <select name="ddlCaras" id="ddlCaras" onchange="UpdateValues()" class="form-control" tabindex="3">
-            <option selected="selected" value="1">UNA CARA</option>
-            <option value="2">DOS CARAS</option>
+          <select name="ddlCaras" id="ddlCaras" onchange="UpdateValues()" class="txtInput form-control" tabindex="3">
+            <option selected="selected" value="1">1</option>
+            <option value="2">2</option>
           </select>
         </div>
       </div>
 
       <div class="table-responsive">
-        <table class="table table-bordered">
+        <table class="table table-bordered table-striped">
           <thead>
             <tr>
               <th class="custom-row">Articulo</th>
@@ -108,7 +114,7 @@
                 <td class="articulo-td">POSTE 2 1/2" x 3m CAL.26</td>
                 <td class="txtInput"><input class="txtInput form-control" name="txtB2" readonly="readonly" size="5" type="text" value="0"></td>
                 <td class="txtInput"> <input class="txtInput form-control" name="txtC2" readonly="readonly" size="5" type="text" value="86.00"></td>
-                <td class="txtInput">$ <input class="txtInput form-control" name="txtD2" readonly="readonly" size="6" type="text" value="0.00"></td>
+                <td class="txtInput"><input class="txtInput form-control" name="txtD2" readonly="readonly" size="6" type="text" value="0.00"></td>
               </tr>
               <tr>
                 <td class="articulo-td">CANAL AMARRE 2 1/2" x 3m CAL..26</td>
