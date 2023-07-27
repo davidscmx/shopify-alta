@@ -166,7 +166,7 @@ def process_string_cal(s):
 
     return result
 
-already_processed = ["TABLAROCA", "PERFILES METÁLICOS USG"]
+already_processed = ["TABLAROCA", "PERFILES METÁLICOS USG","ADHESIVOS Y COMPUESTOS"]
 
 for link_number, link in enumerate(extract_menu_links(old_website_url)):
     
@@ -209,6 +209,8 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
         new_product = shopify.Product()
         new_product.title = product_title
 
+        print(product_title)
+
         # check if product exists
         existing_product = shopify.Product.find_first(title=new_product.title)
         if existing_product:
@@ -242,6 +244,7 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
         new_product.options = [
            {'name': 'Size'},  # Option 1
         ]
+
         new_product.save()
 
         if new_product.errors:
@@ -273,6 +276,9 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
         additional_search_str = None
         if section == "TABLAROCA" or section == "PERFILES METÁLICOS USG" or section=="ADHESIVOS Y COMPUESTOS":
             additional_search_str = "USG"
+
+        if section == "PLAFONES USG":
+            additional_search_str = "Plafon USG"
 
         download_images(product_title, product_title_cleaned, additional_search_str)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
