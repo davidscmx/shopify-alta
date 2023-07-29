@@ -69,7 +69,6 @@ shopify.ShopifyResource.activate_session(api_session)
 # Print the result
 old_website_url = "https://www.altamateriales.com.mx"
 
-#def get_additional_search_term(product_title, section):
 def create_list_from_newlines(input_list):
     # Create an empty list to store the result
     result_list = []
@@ -101,7 +100,6 @@ def join_elements_with_space(input_list):
     # Ensure the list has an even number of elements
     if len(input_list) % 2 != 0:
         input_list = [item.replace('\xa0', '') for item in input_list]
-
         return input_list
 
     # Initialize an empty list to store the joined strings
@@ -127,6 +125,18 @@ def remove_from_descargar(text):
         result = text
     return result.strip()  # Remove leading and trailing whitespaces (optional)
 
+
+def merge_characteristics_and_remove_second(input_list):
+    # Combine the elements inside input_list[0]['characteristics']
+    all_characteristics = [char for data in input_list for char in data['characteristics']]
+
+    # Update the 'characteristics' key in the first dictionary to contain the merged list
+    input_list[0]['characteristics'] = all_characteristics
+
+    # Remove the second dictionary from the list
+    input_list.pop(1)
+
+    return input_list
 
 def create_collection(section):
     collection = shopify.SmartCollection()
@@ -166,43 +176,61 @@ def process_string_cal(s):
 
     return result
 
-already_processed = ["TABLAROCA", "PERFILES METÁLICOS USG","ADHESIVOS Y COMPUESTOS"]
+
+processing = ["MADERA PARA ESTRUCTURA"]
+
+skip = False
+save = True
 
 for link_number, link in enumerate(extract_menu_links(old_website_url)):
-    
+
     section = link[0]
     url = link[1]
-    
-    if section in already_processed:
+
+    if section not in processing:
         continue
-    
+
     response = requests.get(url)
     products = extract_product_info(response.content)
 
     create_collection(section)
+    if section == "MADERA PARA ESTRUCTURA":
+        products = merge_characteristics_and_remove_second(products)
+
+    print(products)
 
     for product in products:
+
         product_title = product['product_name']
-        print("original ", product["characteristics"])
         possible_variant = create_list_from_newlines(product["characteristics"])
-        
+
         if section == "PERFILES METÁLICOS USG":
             possible_variant = join_elements_with_space(possible_variant)
             if product_title == "Alambre Galvanizado":
                 possible_variant = process_string_cal(possible_variant[0])
+
         if section == "ADHESIVOS Y COMPUESTOS":
-            
             if product_title == "Cinta Para DUROCK®":
                 possible_variant = [item for item in possible_variant if item != '']
             else:
                 possible_variant = join_elements_with_space(possible_variant)
 
+        if section == "SUSPENSIÓN DONN" or section == "DUROCK":
+            possible_variant = join_elements_with_space(possible_variant)
+
+        if section == "MADERA PARA ESTRUCTURA":
+            product_title = "Madera para Estructura"
+            product["product_description"] = "Madera desflemada, para estructuras de casas, techos, muros, que se utilizan en construcciones tipo americano."
+
         print(product_title)
         print(possible_variant)
 
-        
+        if skip:
+            continue
+
         if not product_title:
             continue
+
         product_title_cleaned = clean_string(product_title)
 
         # Create a new product
@@ -212,40 +240,37 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
         print(product_title)
 
         # check if product exists
-        existing_product = shopify.Product.find_first(title=new_product.title)
-        if existing_product:
-            print("Product already exists, will not add it again")
-            continue
+        #existing_product = shopify.Product.find_first(title=new_product.title)
+        #if existing_product:
+        #    print("Product already exists, will not add it again")
+        #    continue
 
         new_product.options = [
            {'name': 'Size'},  # Option 1
         ]
         new_product.vendor = get_product_vendor(section, product_title)
-        print(new_product.vendor)
         new_product.product_type = section
         new_product.template_suffix = "sin-precio-ficha-tec"
-        
-        product_description = remove_from_descargar(product["product_description"])
-        html_string = f'<p>{product_description}</p>'                            
-        
-        if len(product['file_paths']) > 0:
-            for pdf_name, pdf_url in product['file_paths'].items(): 
-                pdf_url = old_website_url+"/"+pdf_url
-                pdf_name = pdf_name.replace("DESCARGAR FICHA TÉCNICA","").title()
-                
-                str_to_be_added = (f'\n\n<p><a href={pdf_url} style="font-size: 1.875rem;" '
-                                  f'target="_blank" rel="noopener noreferrer">'
-                                  f'Descargar Ficha Técnica{pdf_name}</a></p>\n')
 
-                html_string+= str_to_be_added
-          
+        product_description = remove_from_descargar(product["product_description"])
+        html_string = f'<p>{product_description}</p>'
+
+        if len(product['file_paths']) > 0:
+            for pdf_name, pdf_url in product['file_paths'].items():
+                print("pdf url", pdf_url)
+                pdf_url = old_website_url+"/"+pdf_url
+                pdf_name = pdf_name.replace("DESCARGAR", "").title()
+
+                str_to_be_added = (f'\n\n<p><a href="{pdf_url}" style="font-size: 1.875rem;" '
+                                   f'target="_blank" rel="noopener noreferrer">'
+                                   f'Descargar{pdf_name}</a></p>\n')
+
+                html_string += str_to_be_added
+
         new_product.body_html = html_string
 
-        new_product.options = [
-           {'name': 'Size'},  # Option 1
-        ]
-
-        new_product.save()
+        if save:
+            new_product.save()
 
         if new_product.errors:
             print("Product was not saved successfully.")
@@ -260,13 +285,15 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
 
             variant = shopify.Variant()
             variant.product_id = new_product.id
+
             variant.option1 = my_var
 
-            if variant.save():
-                print('Successfully created a variant')
-            else:
-                print('Failed to create a variant')
-                print(variant.errors.full_messages())
+            if save:
+                if variant.save():
+                    print('Successfully created a variant')
+                else:
+                    print('Failed to create a variant')
+                    print(variant.errors.full_messages())
 
         # Delete the default variant
         default_variant = [v for v in new_product.variants if v.title == 'Default Title']
@@ -274,14 +301,20 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
             default_variant[0].destroy()
 
         additional_search_str = None
-        if section == "TABLAROCA" or section == "PERFILES METÁLICOS USG" or section=="ADHESIVOS Y COMPUESTOS":
+        if section == "TABLAROCA" or section == "PERFILES METÁLICOS USG" or \
+           section == "ADHESIVOS Y COMPUESTOS" or section == "SUSPENSIÓN DONN" or \
+           section == "DUROCK" or section == "ESQUINEROS" or section == "LINEAR PANEL":
             additional_search_str = "USG"
 
         if section == "PLAFONES USG":
             additional_search_str = "Plafon USG"
 
+        if section == "CREST":
+            additional_search_str = "Soluciones construccion "
+
+        if section == "MADERA PARA ESTRUCTURA":
+            additional_search_str = " construccion tipo americana "
+
         download_images(product_title, product_title_cleaned, additional_search_str)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
             save_image_to_shopify(f'{image}', new_product.id, position=i)
-        
-    break

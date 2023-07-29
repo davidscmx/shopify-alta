@@ -30,10 +30,10 @@ def extract_product_info(html):
 
     if parent_table:
         # Find all the child tables that represent individual products
-        product_tables = parent_table.find_all('td', class_='bg_tabla')
-
+        product_tables = parent_table.find_all('td', class_=['bg_tabla', 'bg_tabla_sin_espacio'])
         # Iterate over each product table and extract the information
         for table in product_tables:
+
             # Initialize variables for each product
             product_name = ''
             product_description = ''
@@ -56,7 +56,6 @@ def extract_product_info(html):
                 product_description = description_element1.text.strip()
                 product_description = product_description.replace('\t', '')
 
-            
             characteristics_elements = table.find_all('td', class_='txt_caracteristicas_relleno')
             for characteristic_element in characteristics_elements:
                 characteristic_element = characteristic_element.text.strip()
@@ -70,7 +69,7 @@ def extract_product_info(html):
             file_elements = table.find_all('a')
             for file_element in file_elements:
                 file_paths[file_element.text] = file_element['href']
-
+            #print(file_paths)
             # Create a dictionary to store the extracted information
             product_info = {
                 'product_name': product_name,

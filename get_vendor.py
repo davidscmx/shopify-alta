@@ -17,6 +17,8 @@ def get_product_vendor(section, title):
         return "USG"
     elif "aislantes" in section.lower():
         return "Owens Corning"
-    
+    elif "crest" in section.lower():
+        return "Crest"
+
 
 
