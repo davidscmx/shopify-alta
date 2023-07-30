@@ -69,6 +69,7 @@ shopify.ShopifyResource.activate_session(api_session)
 # Print the result
 old_website_url = "https://www.altamateriales.com.mx"
 
+
 def create_list_from_newlines(input_list):
     # Create an empty list to store the result
     result_list = []
@@ -177,7 +178,7 @@ def process_string_cal(s):
     return result
 
 
-processing = ["MADERA PARA ESTRUCTURA"]
+processing = ["CERRADURAS"]
 
 skip = False
 save = True
@@ -197,8 +198,6 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
     if section == "MADERA PARA ESTRUCTURA":
         products = merge_characteristics_and_remove_second(products)
 
-    print(products)
-
     for product in products:
 
         product_title = product['product_name']
@@ -215,21 +214,24 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
             else:
                 possible_variant = join_elements_with_space(possible_variant)
 
-        if section == "SUSPENSIÓN DONN" or section == "DUROCK":
+        if section == "SUSPENSIÓN DONN" or section == "DUROCK" or section == "CERRADURAS":
             possible_variant = join_elements_with_space(possible_variant)
 
         if section == "MADERA PARA ESTRUCTURA":
             product_title = "Madera para Estructura"
             product["product_description"] = "Madera desflemada, para estructuras de casas, techos, muros, que se utilizan en construcciones tipo americano."
 
-        print(product_title)
-        print(possible_variant)
+
+        if not product_title:
+            continue
+
+        print("Product title: ", product_title)
+        print("Possible variants ", possible_variant)
+
 
         if skip:
             continue
 
-        if not product_title:
-            continue
 
         product_title_cleaned = clean_string(product_title)
 
@@ -314,6 +316,9 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
 
         if section == "MADERA PARA ESTRUCTURA":
             additional_search_str = " construccion tipo americana "
+
+        if section == "CONECTORES PARA MADERA":
+            additional_search_str = " USP Mitek "
 
         download_images(product_title, product_title_cleaned, additional_search_str)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
