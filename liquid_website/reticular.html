@@ -8,6 +8,7 @@
       crossorigin="anonymous"
     />
     <script type="text/javascript">
+      // <![CDATA[
       function UpdateValues() {
         var tf = document.cuadricula;
         var A = tf.txtAncho.value; //D12
@@ -75,11 +76,23 @@
         tf.txtDesc2.value = tf.ddlPlaca.options[tf.ddlPlaca.selectedIndex].text;
         UpdateValues();
       }
+
+      // ]]>
     </script>
+    <style>
+      /* Custom CSS to make input and "m" side by side */
+      .input-group-custom {
+        display: flex;
+        align-items: center;
+      }
+    </style>
   </head>
 
   <body>
-	<h2>Selecciona tu plafon deseado e ingresa las medidas (Largo y Ancho) de tu proyecto en las casillas siguientes:</h2>
+    <h2>
+      Selecciona tu plafon deseado e ingresa las medidas (Largo y Ancho) de tu
+      proyecto en las casillas siguientes:
+    </h2>
     <div class="container">
       <form id="cuadricula" method="post" name="cuadricula">
         <div class="row">
@@ -123,49 +136,69 @@
                 <tr>
                   <th class="txt_liga_presupuestos">Largo:</th>
                   <td class="listadodelinks">
-                    <input
-                      name="txtLargo"
-                      onblur="if(this.value == '') {this.value = '0'}"
-                      onfocus="if(this.value == '0') {this.value = ''}"
-                      onkeyup="UpdateValues()"
-                      type="text"
-                      value="0"
-                      class="form-control txtInput"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        name="txtLargo"
+                        onblur="if(this.value == '') {this.value = '0'}"
+                        onfocus="if(this.value == '0') {this.value = ''}"
+                        onkeyup="UpdateValues()"
+                        type="text"
+                        value="0"
+                        class="form-control txtInput"
+                      />
+                      <div class="input-group-append d-flex align-items-center">
+                        <span class="input-group-text">m</span>
+                      </div>
+                    </div>
                   </td>
                   <th class="txt_liga_presupuestos">Área de la placa:</th>
                   <td class="listadodelinks">
-                    <input
-                      class="txtInput form-control"
-                      name="txtPlaca"
-                      readonly="readonly"
-                      type="text"
-                      value="0.37"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtPlaca"
+                        readonly="readonly"
+                        type="text"
+                        value="0.37"
+                      />
+                      <div class="input-group-append">
+                        <span class="input-group-text">m<sup>2</sup></span>
+                      </div>
+                    </div>
                   </td>
                 </tr>
                 <tr>
                   <th class="txt_liga_presupuestos">Ancho:</th>
                   <td class="listadodelinks">
-                    <input
-                      name="txtAncho"
-                      onblur="if(this.value == '') {this.value = '0'}"
-                      onfocus="if(this.value == '0') {this.value = ''}"
-                      onkeyup="UpdateValues()"
-                      type="text"
-                      value="0"
-                      class="form-control txtInput"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        name="txtAncho"
+                        onblur="if(this.value == '') {this.value = '0'}"
+                        onfocus="if(this.value == '0') {this.value = ''}"
+                        onkeyup="UpdateValues()"
+                        type="text"
+                        value="0"
+                        class="form-control txtInput"
+                      />
+                      <div class="input-group-append">
+                        <span class="input-group-text">m</span>
+                      </div>
+                    </div>
                   </td>
                   <th class="txt_liga_presupuestos">Área Total:</th>
                   <td class="listadodelinks">
-                    <input
-                      class="txtInput form-control"
-                      name="txtArea"
-                      readonly="readonly"
-                      type="text"
-                      value="0"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtArea"
+                        readonly="readonly"
+                        type="text"
+                        value="0"
+                      />
+                      <div class="input-group-append">
+                        <span class="input-group-text">m<sup>2</sup></span>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -179,33 +212,35 @@
                 <tr>
                   <th class="custom-row" colspan="2">Articulo</th>
                   <th class="custom-row">Cantidad</th>
-                  <th class="custom-row">Unidad</th>
                   <th class="custom-row">$/unidad</th>
-                  <th class="custom-row">$ Total</th>
+                  <th class="custom-row">Total ($)</th>
                 </tr>
                 <tr>
                   <td class="articulo-td" colspan="2">
                     Ángulo Perimetral Donn x 3.66mts
                   </td>
                   <td class="txtInput">
-                    <input
-                      class="txtInput form-control"
-                      name="txtB"
-                      readonly="readonly"
-                      size="5"
-                      type="text"
-                      value="0"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtB"
+                        readonly="readonly"
+                        type="text"
+                        value="0"
+                      />
+                      <div class="input-group-append">
+                        <span class="input-group-text">Pza.</span>
+                      </div>
+                    </div>
                   </td>
-                  <td class="articulo-td">Pza.</td>
                   <td class="txtInput">
                     <input
                       class="txtInput form-control"
                       name="txtC"
                       readonly="readonly"
-                      size="5"
                       type="text"
                       value="189.00"
+                      size="1"
                     />
                   </td>
                   <td class="txtInput">
@@ -213,24 +248,21 @@
                       class="txtInput form-control"
                       name="txtD"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
                   </td>
                 </tr>
                 <tr>
-                  <td class="articulo-td" colspan="2">
+                  <td class="articulo-td">
                     <!--Do not remove this input-->
                     <textarea
                       class="txt_cars_campos form-control"
                       name="txtDesc2"
-                      readonly
+                      readonly="readonly"
                       style="
-                        min-width: 150px;
-                        min-height: 3em;
-                        white-space: pre-wrap;
-                        overflow-wrap: break-word;
+                        min-height: 4em;
+                        overflow-wrap: normal;
                         resize: none;
                         padding: 5px;
                         box-sizing: border-box;
@@ -241,22 +273,25 @@ Frost 414 0.61m x 0.61m
                     >
                   </td>
                   <td class="txtInput">
-                    <input
-                      class="txtInput form-control"
-                      name="txtB2"
-                      readonly="readonly"
-                      size="5"
-                      type="text"
-                      value="0"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtB2"
+                        readonly="readonly"
+                        type="text"
+                        value="0"
+                        size="3"
+                      />
+                      <div class="input-group-append">
+                        <span class="input-group-text">Pza.</span>
+                      </div>
+                    </div>
                   </td>
-                  <td class="articulo-td">Pza.</td>
                   <td class="txtInput">
                     <input
                       class="txtInput form-control"
                       name="txtC2"
                       readonly="readonly"
-                      size="5"
                       type="text"
                       value="304.00"
                     />
@@ -266,33 +301,34 @@ Frost 414 0.61m x 0.61m
                       class="txtInput form-control"
                       name="txtD2"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
                   </td>
                 </tr>
                 <tr>
-                  <td class="articulo-td" colspan="2">
+                  <td class="articulo-td">
                     Tee Principal Donn x 3.66mts
                   </td>
                   <td class="txtInput">
-                    <input
-                      class="txtInput form-control"
-                      name="txtB3"
-                      readonly="readonly"
-                      size="5"
-                      type="text"
-                      value="0"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtB3"
+                        readonly="readonly"
+                        type="text"
+                        value="0"
+                      />
+                      <div class="input-group-append">
+                        <span class="input-group-text">Pza.</span>
+                      </div>
+                    </div>
                   </td>
-                  <td class="articulo-td">Pza.</td>
                   <td class="txtInput">
                     <input
                       class="txtInput form-control"
                       name="txtC3"
                       readonly="readonly"
-                      size="5"
                       type="text"
                       value="335.00"
                     />
@@ -302,33 +338,38 @@ Frost 414 0.61m x 0.61m
                       class="txtInput form-control"
                       name="txtD3"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
                   </td>
                 </tr>
                 <tr>
-                  <td class="articulo-td" colspan="2">
+                  <td class="articulo-td">
                     Tee Conectora Donn x 1.22mts
                   </td>
                   <td class="txtInput">
-                    <input
-                      class="txtInput form-control"
-                      name="txtB4"
-                      readonly="readonly"
-                      size="5"
-                      type="text"
-                      value="0"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtB4"
+                        readonly="readonly"
+                        type="text"
+                        value="0"
+                        style="display: inline-block"
+                      />
+                      <div
+                        class="input-group-append"
+                        style="display: inline-block"
+                      >
+                        <span class="input-group-text">Pza.</span>
+                      </div>
+                    </div>
                   </td>
-                  <td class="articulo-td">Pza.</td>
                   <td class="txtInput">
                     <input
                       class="txtInput form-control"
                       name="txtC4"
                       readonly="readonly"
-                      size="5"
                       type="text"
                       value="97.00"
                     />
@@ -338,33 +379,35 @@ Frost 414 0.61m x 0.61m
                       class="txtInput form-control"
                       name="txtD4"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
                   </td>
                 </tr>
                 <tr>
-                  <td class="articulo-td" colspan="2">
+                  <td class="articulo-td">
                     Tee Conectora Donn x 0.61mts
                   </td>
                   <td class="txtInput">
-                    <input
-                      class="txtInput form-control"
-                      name="txtB5"
-                      readonly="readonly"
-                      size="5"
-                      type="text"
-                      value="0"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtB5"
+                        readonly="readonly"
+                        type="text"
+                        value="0"
+                      />
+
+                      <div class="input-group-append">
+                        <span class="input-group-text">Pza.</span>
+                      </div>
+                    </div>
                   </td>
-                  <td class="articulo-td">Pza.</td>
                   <td class="txtInput">
                     <input
                       class="txtInput form-control"
                       name="txtC5"
                       readonly="readonly"
-                      size="5"
                       type="text"
                       value="48.00"
                     />
@@ -374,31 +417,32 @@ Frost 414 0.61m x 0.61m
                       class="txtInput form-control"
                       name="txtD5"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
                   </td>
                 </tr>
                 <tr>
-                  <td class="articulo-td" colspan="2">Alambre Cal.14</td>
+                  <td class="articulo-td" >Alambre Cal.14</td>
                   <td class="txtInput">
-                    <input
-                      class="txtInput form-control"
-                      name="txtB6"
-                      readonly="readonly"
-                      size="5"
-                      type="text"
-                      value="0"
-                    />
+                    <div class="input-group-custom">
+                      <input
+                        class="txtInput form-control"
+                        name="txtB6"
+                        readonly="readonly"
+                        type="text"
+                        value="0"
+                      />
+                      <div class="input-group-append">
+                        <span class="input-group-text">Kg.</span>
+                      </div>
+                    </div>
                   </td>
-                  <td class="txtInput">Kg.</td>
                   <td class="txtInput">
                     <input
                       class="txtInput form-control"
                       name="txtC6"
                       readonly="readonly"
-                      size="5"
                       type="text"
                       value="53.00"
                     />
@@ -408,7 +452,6 @@ Frost 414 0.61m x 0.61m
                       class="txtInput form-control"
                       name="txtD6"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
@@ -424,8 +467,6 @@ Frost 414 0.61m x 0.61m
                 <tr>
                   <th></th>
                   <th></th>
-                  <th></th>
-				  <th></th>
                   <th class="sum-header">Subtotal</th>
                   <td class="sum-header">
                     <input
@@ -433,7 +474,6 @@ Frost 414 0.61m x 0.61m
                       id="txtB37"
                       name="txtSub"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
@@ -442,8 +482,6 @@ Frost 414 0.61m x 0.61m
                 <tr>
                   <th></th>
                   <th></th>
-                  <th></th>
-				  <th></th>
                   <th class="sum-header">
                     <span class="listado_precios">IVA (16%)</span>
                   </th>
@@ -453,7 +491,6 @@ Frost 414 0.61m x 0.61m
                       id="txtB38"
                       name="txtIVA"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
@@ -462,8 +499,6 @@ Frost 414 0.61m x 0.61m
                 <tr>
                   <th></th>
                   <th></th>
-                  <th></th>
-				  <th></th>
                   <th class="sum-header">Total</th>
                   <th class="sum-header">
                     <input
@@ -471,7 +506,6 @@ Frost 414 0.61m x 0.61m
                       id="txtB39"
                       name="txtTOT"
                       readonly="readonly"
-                      size="6"
                       type="text"
                       value="0.00"
                     />
@@ -483,11 +517,5 @@ Frost 414 0.61m x 0.61m
         </div>
       </form>
     </div>
-    <!-- Add Bootstrap JS and jQuery-->
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-      crossorigin="anonymous"
-    ></script>
   </body>
 </html>
