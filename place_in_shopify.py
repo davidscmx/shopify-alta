@@ -178,7 +178,7 @@ def process_string_cal(s):
     return result
 
 
-processing = ["CERRADURAS"]
+processing = ["CLAVOS"]
 
 skip = False
 save = True
@@ -214,7 +214,7 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
             else:
                 possible_variant = join_elements_with_space(possible_variant)
 
-        if section == "SUSPENSIÓN DONN" or section == "DUROCK" or section == "CERRADURAS":
+        if section == "SUSPENSIÓN DONN" or section == "DUROCK" or section == "CERRADURAS" or section=="ESCALERAS":
             possible_variant = join_elements_with_space(possible_variant)
 
         if section == "MADERA PARA ESTRUCTURA":
@@ -227,7 +227,6 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
 
         print("Product title: ", product_title)
         print("Possible variants ", possible_variant)
-
 
         if skip:
             continue
@@ -319,6 +318,13 @@ for link_number, link in enumerate(extract_menu_links(old_website_url)):
 
         if section == "CONECTORES PARA MADERA":
             additional_search_str = " USP Mitek "
+
+        if section == "ESCALERAS":
+            additional_search_str = " CUPRUM "
+
+        if section == "CLAVOS":
+            additional_search_str = " Prime Source "
+
 
         download_images(product_title, product_title_cleaned, additional_search_str)
         for i, image in enumerate(Path(f"./images/{product_title_cleaned}/").iterdir()):
