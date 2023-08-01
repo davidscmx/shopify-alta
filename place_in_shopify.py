@@ -178,7 +178,11 @@ def process_string_cal(s):
     return result
 
 
+<<<<<<< HEAD
 processing = ["CLAVOS"]
+=======
+processing = ["IMPERMEABILIZANTES"]
+>>>>>>> 9862ef982cffb0471f7c7279e6761189f320ae42
 
 skip = False
 save = True
