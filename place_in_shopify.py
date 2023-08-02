@@ -178,7 +178,7 @@ def process_string_cal(s):
     return result
 
 
-processing = ["IMPERMEABILIZANTES"]
+processing = ["HERRAM. PARA TABLAROQUERO"]
 
 skip = False
 save = True
